@@ -244,4 +244,3 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Author
 **Mahmudul Hasan**  
-Submission for AppifyDevs — Software Engineering Internship (Frontend) Assignment.
