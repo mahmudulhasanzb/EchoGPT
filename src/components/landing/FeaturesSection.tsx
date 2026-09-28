@@ -1,91 +1,76 @@
 "use client";
 
 import React from "react";
-import { SplitSquareVertical, Globe, Key, ShieldCheck, BookmarkCheck, Zap } from "lucide-react";
+import { SplitSquareVertical, Globe, Key, Shield, BookmarkCheck, Zap } from "lucide-react";
 
 export function FeaturesSection() {
   const features = [
     {
       icon: SplitSquareVertical,
-      title: "Real-time Split-Screen Compare",
+      title: "Side-by-Side Comparison",
       description:
-        "Send one prompt and watch two models stream side-by-side. Choose the best response, merge both, or regenerate with single click.",
-      tag: "Signature Feature",
+        "Submit a prompt and watch two models stream responses simultaneously so you can compare and pick the best answer.",
     },
     {
       icon: Globe,
-      title: "Chrome Extension Co-Pilot",
+      title: "Browser Extension",
       description:
-        "Summon EchoGPT across any web page with Cmd+K. Summarize articles, draft Gmail replies, or translate text with full page awareness.",
-      tag: "Extension",
+        "Access EchoGPT on any webpage with a convenient sidebar to summarize articles, draft replies, or translate text.",
     },
     {
       icon: Zap,
-      title: "Smart Model Failover",
+      title: "Fast Model Switching",
       description:
-        "If OpenAI or Anthropic suffers an outage or rate limit, EchoGPT automatically falls back to secondary frontier models with zero dropped tokens.",
-      tag: "High Availability",
+        "Seamlessly switch between GPT-4o, Claude 3.5 Sonnet, Gemini 1.5 Pro, and DeepSeek R1 without changing tools.",
     },
     {
       icon: BookmarkCheck,
-      title: "Prompt Studio & History",
+      title: "Prompt Templates",
       description:
-        "Save high-performing prompts, inject dynamic placeholders, and categorize conversations by project tag or repository.",
-      tag: "Productivity",
+        "Save and reuse effective prompts for coding, content writing, analysis, and daily productivity tasks.",
     },
     {
       icon: Key,
-      title: "Bring Your Own Key (BYOK)",
+      title: "Custom API Keys",
       description:
-        "Plug in your direct OpenAI, Anthropic, or OpenRouter API keys to pay strict raw wholesale token costs with zero markup.",
-      tag: "Flexibility",
+        "Optionally use your own OpenAI or Anthropic API keys directly with client-side storage for complete control.",
     },
     {
-      icon: ShieldCheck,
-      title: "Strict Zero-Training Guarantee",
+      icon: Shield,
+      title: "Private & Secure",
       description:
-        "Your code, documents, and personal queries are piped directly via secure enterprise endpoints and never used for LLM retraining.",
-      tag: "Security",
+        "Your prompts and conversation history remain stored in your local browser and are never shared or resold.",
     },
   ];
 
   return (
-    <section className="py-24 bg-zinc-50 dark:bg-[#09090e]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-100 dark:bg-violet-950/80 text-violet-700 dark:text-violet-300 text-xs font-semibold mb-3">
-            <Zap className="w-3.5 h-3.5" />
-            <span>Built For Power Users</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-white mb-4">
-            Engineered To 10x Your AI Workflow
+    <section className="py-16 bg-zinc-50/50 dark:bg-[#0c0c12]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-white mb-3">
+            Everything You Need in One Place
           </h2>
-          <p className="text-zinc-600 dark:text-zinc-400 text-base">
-            Everything you need to work across frontier LLMs without friction, tab bloat, or redundant subscriptions.
+          <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400">
+            A unified suite built for developers, writers, and researchers.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feat, i) => {
             const Icon = feat.icon;
             return (
               <div
                 key={i}
-                className="group relative p-7 rounded-2xl bg-white dark:bg-[#111118] border border-zinc-200 dark:border-zinc-800/80 hover:border-violet-500/50 dark:hover:border-violet-500/40 transition-all duration-300 hover:shadow-xl hover:shadow-violet-500/5 hover:-translate-y-1"
+                className="p-6 rounded-2xl bg-white dark:bg-[#111116] border border-zinc-200 dark:border-zinc-800 transition-all hover:border-violet-500/40"
               >
-                <div className="flex items-center justify-between mb-5">
-                  <div className="w-12 h-12 rounded-xl bg-violet-50 dark:bg-violet-950/60 border border-violet-100 dark:border-violet-900/40 flex items-center justify-center text-violet-600 dark:text-violet-400 group-hover:scale-110 transition-transform">
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <span className="text-[11px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
-                    {feat.tag}
-                  </span>
+                <div className="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-950/60 border border-violet-100 dark:border-violet-900/40 flex items-center justify-center text-violet-600 dark:text-violet-400 mb-4">
+                  <Icon className="w-5 h-5" />
                 </div>
 
-                <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-2 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
+                <h3 className="text-base font-semibold text-zinc-900 dark:text-white mb-2">
                   {feat.title}
                 </h3>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
                   {feat.description}
                 </p>
               </div>
