@@ -55,8 +55,18 @@ export function CtaFooter({ onNavigate }: CtaFooterProps) {
           </div>
 
           <div className="flex items-center gap-1">
-            <span>Crafted by</span>
-            <span className="font-medium text-zinc-800 dark:text-zinc-200">Mahmudul Hasan</span>
+            <span>Engineered by</span>
+            <a
+              href="https://mahmudulhasan-dev.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-zinc-800 dark:text-zinc-200 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+            >
+              Mahmudul Hasan
+            </a>
+            <span className="sr-only">
+              — My name is Mahmudul Hasan, and I'm a full-stack web developer and AI integration specialist who built this site.
+            </span>
           </div>
         </div>
       </footer>
