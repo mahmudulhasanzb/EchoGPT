@@ -9,9 +9,10 @@ export type ActiveView = "landing" | "webapp" | "extension";
 interface ViewSwitcherProps {
   activeView: ActiveView;
   setActiveView: (view: ActiveView) => void;
+  isVisible?: boolean;
 }
 
-export function ViewSwitcher({ activeView, setActiveView }: ViewSwitcherProps) {
+export function ViewSwitcher({ activeView, setActiveView, isVisible = true }: ViewSwitcherProps) {
   const tabs = [
     { id: "landing" as ActiveView, label: "Home" },
     { id: "webapp" as ActiveView, label: "Web App" },
@@ -19,7 +20,13 @@ export function ViewSwitcher({ activeView, setActiveView }: ViewSwitcherProps) {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-zinc-200/80 dark:border-zinc-800/80 bg-white/90 dark:bg-[#0a0a0f]/90 backdrop-blur-md">
+    <header
+      className={`sticky top-0 z-50 w-full shrink-0 bg-white/90 dark:bg-[#0a0a0f]/90 backdrop-blur-md transition-all duration-300 ease-in-out overflow-hidden ${
+        isVisible
+          ? "h-16 border-b border-zinc-200/80 dark:border-zinc-800/80 opacity-100 translate-y-0"
+          : "h-0 border-b-0 opacity-0 -translate-y-full pointer-events-none"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
         {/* Brand */}
         <div

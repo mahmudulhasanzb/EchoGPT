@@ -9,7 +9,12 @@ import { SettingsModal } from "./SettingsModal";
 import { INITIAL_SESSIONS, ChatSession, ChatMessage } from "./mockData";
 import { Sparkles, Menu, Code, FileText, BrainCircuit } from "lucide-react";
 
-export function WebApp() {
+interface WebAppProps {
+  isHeaderVisible?: boolean;
+  setIsHeaderVisible?: (visible: boolean) => void;
+}
+
+export function WebApp({ isHeaderVisible, setIsHeaderVisible }: WebAppProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [sessions, setSessions] = useState<ChatSession[]>(INITIAL_SESSIONS);
   const [activeSessionId, setActiveSessionId] = useState<string>("session-1");
@@ -21,12 +26,13 @@ export function WebApp() {
   const [showSettings, setShowSettings] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const lastScrollTopRef = useRef<number>(0);
 
   const activeSession =
     sessions.find((s) => s.id === activeSessionId) || sessions[0];
 
   useEffect(() => {
-    if (window.innerWidth >= 768) {
+    if (typeof window !== "undefined" && window.innerWidth >= 768) {
       setIsSidebarOpen(true);
     }
   }, []);
@@ -34,6 +40,72 @@ export function WebApp() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [activeSession?.messages, isGenerating]);
+
+  // "hide on up-scroll" scroll listener
+  const handleFeedScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const currentScrollTop = e.currentTarget.scrollTop;
+    const delta = currentScrollTop - lastScrollTopRef.current;
+
+    // When user scrolls up (delta < -6), hide header
+    if (delta < -6 && currentScrollTop > 10) {
+      setIsHeaderVisible?.(false);
+    } else if (delta > 6) {
+      // When scrolling down, reveal header
+      setIsHeaderVisible?.(true);
+    }
+
+    // Always reveal at the very top
+    if (currentScrollTop <= 5) {
+      setIsHeaderVisible?.(true);
+    }
+
+    lastScrollTopRef.current = currentScrollTop;
+  };
+
+  // Global wheel listener so up-scroll hides header from anywhere in the workspace
+  useEffect(() => {
+    const handleGlobalWheel = (e: WheelEvent) => {
+      // If cursor is near top of screen (header zone), always reveal
+      if (e.clientY <= 60) {
+        setIsHeaderVisible?.(true);
+        return;
+      }
+
+      if (e.deltaY < -4) {
+        // Wheeling UP (up-scroll) -> hide header
+        setIsHeaderVisible?.(false);
+      } else if (e.deltaY > 4) {
+        // Wheeling DOWN -> reveal header
+        setIsHeaderVisible?.(true);
+      }
+    };
+
+    let touchStartY = 0;
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+    const handleTouchMove = (e: TouchEvent) => {
+      const currentY = e.touches[0].clientY;
+      const diff = currentY - touchStartY;
+      if (diff < -15) {
+        // Swiping up -> hide
+        setIsHeaderVisible?.(false);
+      } else if (diff > 15) {
+        // Swiping down -> reveal
+        setIsHeaderVisible?.(true);
+      }
+    };
+
+    window.addEventListener("wheel", handleGlobalWheel, { passive: true });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+
+    return () => {
+      window.removeEventListener("wheel", handleGlobalWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, [setIsHeaderVisible]);
 
   // Start new session
   const handleNewChat = () => {
@@ -141,8 +213,8 @@ export function WebApp() {
   ];
 
   return (
-    <div className="flex-1 flex h-[calc(100vh-4rem)] overflow-hidden bg-zinc-50 dark:bg-[#09090d]">
-      {/* Sidebar */}
+    <div className="flex-1 flex h-full min-h-0 overflow-hidden bg-zinc-50 dark:bg-[#09090d]">
+      {/* Sidebar (Fixed in place) */}
       <Sidebar
         isOpen={isSidebarOpen}
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -155,31 +227,23 @@ export function WebApp() {
       />
 
       {/* Main Chat Workspace */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden relative">
-        {/* Top Chat Bar */}
-        <div className="px-4 py-2.5 border-b border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-[#0c0c12]/70 backdrop-blur-md flex items-center justify-between z-10">
-          <div className="flex items-center gap-2.5">
-            <button
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
-              title="Toggle Sidebar"
-            >
-              <Menu className="w-4 h-4" />
-            </button>
-            <h2 className="text-xs sm:text-sm font-semibold text-zinc-900 dark:text-white truncate max-w-[180px] sm:max-w-xs md:max-w-md">
-              {activeSession.title}
-            </h2>
-          </div>
+      <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden relative">
+        {/* Mobile floating sidebar toggle */}
+        {!isSidebarOpen && (
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="md:hidden absolute top-3 left-3 z-20 p-2 rounded-xl bg-white/90 dark:bg-[#0c0c12]/90 border border-zinc-200 dark:border-zinc-800 shadow-md text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+            title="Open Sidebar"
+          >
+            <Menu className="w-4 h-4" />
+          </button>
+        )}
 
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] text-zinc-400">
-              {activeSession.mode === "compare" ? "Side-by-Side" : "Single Model"}
-            </span>
-          </div>
-        </div>
-
-        {/* Message Feed / Empty State */}
-        <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-4 space-y-4">
+        {/* Message Feed (The ONLY scrollable container) */}
+        <div
+          onScroll={handleFeedScroll}
+          className="flex-1 min-h-0 overflow-y-auto px-3 sm:px-6 py-4 space-y-4"
+        >
           {activeSession.messages.length === 0 ? (
             <div className="max-w-2xl mx-auto h-full flex flex-col justify-center items-center text-center py-8">
               <div className="w-10 h-10 rounded-xl bg-violet-600 text-white flex items-center justify-center shadow-sm mb-4">
@@ -238,18 +302,20 @@ export function WebApp() {
           )}
         </div>
 
-        {/* Input Dock */}
-        <InputDock
-          onSendMessage={handleSendMessage}
-          isGenerating={isGenerating}
-          onStop={() => setIsGenerating(false)}
-          isCompareMode={isCompareMode}
-          onToggleCompareMode={() => setIsCompareMode(!isCompareMode)}
-          modelA={modelA}
-          setModelA={setModelA}
-          modelB={modelB}
-          setModelB={setModelB}
-        />
+        {/* Input Dock (Fixed at bottom) */}
+        <div className="shrink-0 w-full z-10">
+          <InputDock
+            onSendMessage={handleSendMessage}
+            isGenerating={isGenerating}
+            onStop={() => setIsGenerating(false)}
+            isCompareMode={isCompareMode}
+            onToggleCompareMode={() => setIsCompareMode(!isCompareMode)}
+            modelA={modelA}
+            setModelA={setModelA}
+            modelB={modelB}
+            setModelB={setModelB}
+          />
+        </div>
       </div>
 
       {/* Modals */}

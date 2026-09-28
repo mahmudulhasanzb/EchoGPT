@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   BookmarkCheck,
   X,
+  Menu,
 } from "lucide-react";
 import { ChatSession } from "./mockData";
 
@@ -47,7 +48,7 @@ export function Sidebar({
       )}
 
       <aside
-        className={`fixed md:relative top-0 bottom-0 left-0 z-40 md:z-auto flex flex-col h-full bg-white dark:bg-[#0d0d12] border-r border-zinc-200 dark:border-zinc-800 transition-all duration-200 select-none ${
+        className={`fixed md:relative top-0 bottom-0 left-0 z-40 md:z-auto flex flex-col h-full shrink-0 overflow-hidden bg-white dark:bg-[#0d0d12] border-r border-zinc-200 dark:border-zinc-800 transition-all duration-200 select-none ${
           isOpen
             ? "w-64 sm:w-72 translate-x-0"
             : "-translate-x-full md:translate-x-0 md:w-16"
@@ -56,39 +57,47 @@ export function Sidebar({
         {/* Top Header */}
         <div className="p-3 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800">
           {isOpen ? (
-            <button
-              onClick={() => {
-                onNewChat();
-                if (window.innerWidth < 768) onToggle();
-              }}
-              className="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-medium text-xs sm:text-sm shadow-xs transition-colors cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              <span>New Chat</span>
-              <kbd className="hidden sm:inline-block ml-auto text-[10px] font-mono bg-violet-700 px-1.5 py-0.5 rounded text-violet-100">
-                ⌘N
-              </kbd>
-            </button>
+            <>
+              <button
+                onClick={() => {
+                  onNewChat();
+                  if (window.innerWidth < 768) onToggle();
+                }}
+                className="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-medium text-xs sm:text-sm shadow-xs transition-colors cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>New Chat</span>
+                <kbd className="hidden sm:inline-block ml-auto text-[10px] font-mono bg-violet-700 px-1.5 py-0.5 rounded text-violet-100">
+                  ⌘N
+                </kbd>
+              </button>
+              <button
+                onClick={onToggle}
+                className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer ml-2"
+                title="Close Sidebar"
+              >
+                <ChevronLeft className="w-4 h-4 hidden md:block" />
+                <X className="w-4 h-4 md:hidden" />
+              </button>
+            </>
           ) : (
-            <button
-              onClick={onNewChat}
-              className="w-full flex items-center justify-center py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white shadow-xs cursor-pointer"
-              title="New Chat (⌘N)"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
+            <div className="w-full flex flex-col items-center gap-2">
+              <button
+                onClick={onToggle}
+                className="w-full flex items-center justify-center p-2 rounded-lg text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                title="Expand Sidebar"
+              >
+                <Menu className="w-4 h-4" />
+              </button>
+              <button
+                onClick={onNewChat}
+                className="w-full flex items-center justify-center py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white shadow-xs cursor-pointer"
+                title="New Chat (⌘N)"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            </div>
           )}
-
-          <button
-            onClick={onToggle}
-            className={`p-1.5 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer ${
-              isOpen ? "ml-2" : "hidden"
-            }`}
-            title="Close Sidebar"
-          >
-            <ChevronLeft className="w-4 h-4 hidden md:block" />
-            <X className="w-4 h-4 md:hidden" />
-          </button>
         </div>
 
         {/* Navigation & Session History */}
@@ -151,7 +160,7 @@ export function Sidebar({
         </div>
 
         {/* Footer Settings */}
-        <div className="p-3 border-t border-zinc-200 dark:border-zinc-800">
+        <div className="p-3 pb-8 border-t border-zinc-200 dark:border-zinc-800">
           <button
             onClick={onOpenSettings}
             className={`w-full flex items-center gap-2 p-2 rounded-xl text-xs text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer ${
