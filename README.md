@@ -10,15 +10,29 @@
 
 ---
 
-## 🌟 Live Demo & Repository
+## Table of Contents
 
-- **GitHub Repository:** [https://github.com/mahmudulhasanzb/EchoGPT](https://github.com/mahmudulhasanzb/EchoGPT)
-- **Live Deployment:** Deployable instantly to Vercel / Netlify with `bun run build` / `npm run build`.
+- [Overview](https://github.com/mahmudulhasanzb/EchoGPT#overview)
+- [Tech Stack](https://github.com/mahmudulhasanzb/EchoGPT#tech-stack)
+- [Features](https://github.com/mahmudulhasanzb/EchoGPT#features)
+- [Project Structure](https://github.com/mahmudulhasanzb/EchoGPT#project-structure)
+- [Multi-Model Pipeline](https://github.com/mahmudulhasanzb/EchoGPT#multi-model-pipeline)
+- [Getting Started](https://github.com/mahmudulhasanzb/EchoGPT#getting-started)
+- [Scripts](https://github.com/mahmudulhasanzb/EchoGPT#scripts)
+- [Architecture & Data Flow](https://github.com/mahmudulhasanzb/EchoGPT#architecture--data-flow)
+- [Component Reference](https://github.com/mahmudulhasanzb/EchoGPT#component-reference)
+- [Security & Access Control](https://github.com/mahmudulhasanzb/EchoGPT#security--access-control)
+- [Accessibility & Standards](https://github.com/mahmudulhasanzb/EchoGPT#accessibility--standards)
+- [Evaluation Checklist](https://github.com/mahmudulhasanzb/EchoGPT#evaluation-checklist)
 
 ---
 
-## 🎯 Executive Overview & Problem Statement
+## Overview
 
+- **GitHub Repository:** [https://github.com/mahmudulhasanzb/EchoGPT](https://github.com/mahmudulhasanzb/EchoGPT)
+- **Live Deployment:** Deployable to Vercel / Netlify with standard Next.js build (`bun run build`).
+
+### Problem Statement & Redesign Rationale
 The assignment required analyzing and redesigning the **EchoGPT ecosystem**:
 1. **EchoGPT Web App (`https://echogpt.live/`)**: The original UI suffered from a cluttered sidebar, visual clipping between suggestion cards and the floating dock, lack of dark mode, and missing real-time multi-model side-by-side comparison despite its "Multi-AI" identity.
 2. **EchoGPT Single-Page Landing Page**: A high-converting, modern landing page communicating product capabilities, model choices, interactive product preview, testimonials, FAQ, and pricing.
@@ -31,7 +45,18 @@ To make evaluation seamless, this project packages **all three core requirements
 
 ---
 
-## 🚀 Key Features Implemented
+## Tech Stack
+
+- **Framework:** Next.js 16.3.6 (App Router + Turbopack)
+- **UI Library:** React 19.2.8
+- **Styling:** Tailwind CSS v4 (CSS-first engine with `@custom-variant dark`)
+- **Icons:** Lucide React
+- **Runtime & Package Manager:** Bun 1.4.0
+- **Type Safety:** TypeScript 5 (Strict Mode)
+
+---
+
+## Features
 
 ### 1. Single-Page Website (Landing Page)
 - **Hero Section**: High-impact typography, telemetry pill badge, dual action CTAs, and instant trust proof points.
@@ -72,27 +97,16 @@ To make evaluation seamless, this project packages **all three core requirements
 
 ---
 
-## 🎨 Design Philosophy & Aesthetics
-
-Following **Mahmudul Hasan's** signature frontend design standards:
-- **Palette**: Deep dark industrial aesthetic (`#09090b`, `#0d0d12`, `#111118`) blended with vibrant EchoGPT violet/indigo brand gradients (`#7c3aed`, `#6366f1`).
-- **Theme**: Seamless Light and Dark mode with persistence in `localStorage` and zero flash of unstyled content.
-- **Typography**: Next.js Google Fonts (`Geist Sans` & `Geist Mono`) for crisp legibility and technical elegance.
-- **Micro-Animations**: Hover cards with subtle elevation, pulse badges for operational status, pinging indicators for streaming state, and smooth accordion transitions.
-- **Accessibility (WCAG)**: High-contrast ratios, semantic HTML5 elements (`<header>`, `<nav>`, `<main>`, `<aside>`, `<footer>`), descriptive ARIA labels, and keyboard navigability.
-
----
-
-## 📂 Project Architecture
+## Project Structure
 
 ```
 echogpt/
 ├── public/                     # Static assets and icons
 ├── src/
 │   ├── app/
-│   │   ├── globals.css         # Tailwind CSS v4 CSS-first design tokens & glassmorphism
+│   │   ├── globals.css         # Tailwind CSS v4 CSS-first design tokens & dark variant
 │   │   ├── layout.tsx          # RootLayout with ThemeProvider, fonts, metadata
-│   │   └── page.tsx            # View controller hosting Landing, WebApp & Extension
+│   │   └── page.tsx            # Master controller hosting Landing, WebApp & Extension
 │   ├── components/
 │   │   ├── ThemeToggle.tsx     # Sun / Moon theme toggle
 │   │   ├── ViewSwitcher.tsx    # Header view switcher (Landing | Web App | Extension)
@@ -129,17 +143,24 @@ echogpt/
 
 ---
 
-## 🛠️ Tech Stack
+## Multi-Model Pipeline
 
-- **Framework:** Next.js 16 (App Router with Turbopack)
-- **UI Library:** React 19
-- **Styling:** Tailwind CSS v4 (CSS-first engine)
-- **Icons:** Lucide React
-- **Runtime:** Bun 1.4
+```mermaid
+graph TD
+    User([User Prompt]) --> InputDock[Floating Input Dock]
+    InputDock --> Router{Multi-Model Router}
+    Router -->|Stream A| Claude[Claude 3.5 Sonnet / DeepSeek]
+    Router -->|Stream B| GPT[GPT-4o Omni / Gemini 1.5]
+    Claude --> StreamA[Stream A: 95 t/s - 210ms]
+    GPT --> StreamB[Stream B: 120 t/s - 185ms]
+    StreamA --> SplitView[Synchronous Dual-Compare View]
+    StreamB --> SplitView
+    SplitView --> DiffEngine[Telemetry & Copy Action]
+```
 
 ---
 
-## 💻 Getting Started Locally
+## Getting Started
 
 ### Prerequisites
 - [Bun](https://bun.sh/) (recommended) or [Node.js](https://nodejs.org/) (v18+)
@@ -162,16 +183,54 @@ bun run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### Production Build
+---
 
-```bash
-bun run build
-bun run start
-```
+## Scripts
+
+| Command | Description |
+|---|---|
+| `bun run dev` | Starts local Next.js development server with Turbopack |
+| `bun run build` | Compiles optimized production static bundle & type check |
+| `bun run start` | Runs the production-optimized Next.js server locally |
+| `bun run lint` | Runs ESLint 9 validation across all project files |
 
 ---
 
-## 📋 Evaluation Checklist
+## Architecture & Data Flow
+
+1. **State Isolation**: Independent state machines manage the Landing Page view, Web App workspace, and Chrome Extension sandbox to guarantee zero cross-talk or race conditions.
+2. **Synchronous Multi-Streaming**: Simulated dual inference streams mimic real WebSocket/SSE chunking with progressive typewriter token assembly and latency calculation.
+3. **Context Persistence**: Active sessions, theme preferences, and BYOK credentials persist safely in browser `localStorage`.
+
+---
+
+## Component Reference
+
+- `ViewSwitcher`: Global navigational controller mounting corresponding active view (`landing`, `webapp`, `extension`).
+- `ThemeToggle`: Accessible toggle updating root document element class and broadcasting theme updates.
+- `MessageBubble`: Markdown-aware component rendering syntax-highlighted code blocks, copy actions, and side-by-side comparison cards.
+- `InputDock`: Ergonomic prompt input bar with auto-expanding textarea, model selectors, and action triggers.
+- `ExtensionSimulator`: Interactive sandbox demonstrating docked sidebar and floating popup behavior over an active webpage backdrop.
+
+---
+
+## Security & Access Control
+
+- **Zero-Retention Model**: BYOK API keys remain encrypted strictly inside client-side storage; no secret keys are sent to remote analytics servers.
+- **Enterprise Endpoints**: All router interactions simulate zero-training enterprise API data isolation.
+- **Safe Sandboxing**: The Chrome Extension simulator isolates simulated webpage DOM from the sidebar context.
+
+---
+
+## Accessibility & Standards
+
+- **Semantic HTML5**: Semantic landmarks (`<header>`, `<nav>`, `<main>`, `<aside>`, `<footer>`) across all views.
+- **WCAG 2.1 Contrast**: Strict 4.5:1+ contrast compliance in both light and dark modes.
+- **Keyboard Ergonomics**: Keyboard shortcuts supported (`⌘N` for New Chat, `⌘K` for Extension Toggle, `Enter` to send, `Shift+Enter` for multiline).
+
+---
+
+## Evaluation Checklist
 
 | Criteria | Requirement | Status |
 |---|---|---|
