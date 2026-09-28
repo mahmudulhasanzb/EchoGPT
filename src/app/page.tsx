@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { ViewSwitcher, ActiveView } from "@/components/ViewSwitcher";
+import { LandingPage } from "@/components/landing/LandingPage";
 
 export default function Home() {
   const [activeView, setActiveView] = useState<ActiveView>("landing");
@@ -11,11 +12,7 @@ export default function Home() {
       <ViewSwitcher activeView={activeView} setActiveView={setActiveView} />
 
       <main className="flex-1 flex flex-col">
-        {activeView === "landing" && (
-          <div className="flex-1 flex items-center justify-center p-12 text-center">
-            <h1 className="text-2xl font-bold">Landing Page View (Mounting...)</h1>
-          </div>
-        )}
+        {activeView === "landing" && <LandingPage onNavigate={setActiveView} />}
         {activeView === "webapp" && (
           <div className="flex-1 flex items-center justify-center p-12 text-center">
             <h1 className="text-2xl font-bold">Web App Workspace View (Mounting...)</h1>
